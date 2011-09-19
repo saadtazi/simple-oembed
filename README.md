@@ -16,16 +16,16 @@ The constructor method has 3 optional parameters:
 <dl>
 <dt>$endPoints</dt>
 <dd>
-* an array of endPoints (array of array)
-* each endPoint can have 3 keys: pattern (required), url (required), 
-params (optional)
-* the service will try if the resource URL matches the pattern; 
-if true, then the url value will be used to get oembed data
-* if provided, the params values are passed when querying the url everytime (a way to pass
-a user_token for example - useful for embed.ly)
-* example:
+<ul><li>an array of endPoints (array of array)</li>
+    <li>each endPoint can have 3 keys: pattern (required), url (required), 
+params (optional)</li>
+    <li>the service will try if the resource URL matches the pattern;
+if true, then the url value will be used to get oembed data</li>
+    <li>if provided, the params values are passed when querying the url everytime (a way to pass
+a user_token for example - useful for embed.ly)</li>
+<li>example:
 
-``` php
+<code>
     array(
             array(
                 'pattern' => '/http:\/\/www\.youtube\.com/', 
@@ -38,17 +38,19 @@ a user_token for example - useful for embed.ly)
             )
         )
 
-```
+</code>
+</li>
 </dd>
 
   
 <dt>$discovery</dt>
 <dd>
-* default: false
-* if true, and if no endpoint is found for the resource URL, then the service 
+    <ul>
+        <li>default: false</li>
+        <li>if true, and if no endpoint is found for the resource URL, then the service 
 will fetch the resource Url and try to extract the oembed URL, 
 then call that URL.
-Check the oembed specification for more information. 
+Check the oembed specification for more information.</li>
 </dd>
 <dt>$allowedUrlPatterns</dt>
 <dd>
