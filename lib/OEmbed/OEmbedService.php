@@ -77,6 +77,7 @@ class OEmbedService {
      * @param array $allowedUrlPatterns 
      */
     public function __construct($endPoints = array(), $discovery = false, $allowedUrlPatterns = array()) {
+        //var_dump($endPoints);//die();
         $this->endPoints = $endPoints;
         $this->allowedUrlPatterns = $allowedUrlPatterns;
         $this->discovery = $discovery;
