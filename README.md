@@ -8,6 +8,8 @@ Read more about oembed here: http://oembed.com
 
     echo $response->html; //stdClass
 
+If you want to use it with Symfony, I created a [bundle](https://github.com/saadtazi/SaadTaziOEmbedBundle).
+
 Constructor parameters
 ----------------------
 
@@ -63,9 +65,12 @@ Constructor example with all the params
 ---------------------------
 
 Here is an example that:
+
 * sets 3 endpoints. the last one (because the pattern is /.*/) is the default 
 one, and the param 'key=YOUR_KEY' will be added when requresting oembed data
+
 * allows discovery (2nd param = true)
+
 * allows only urls from http://www.youtube.com and http://www.flickr.com
 
 ``` php
