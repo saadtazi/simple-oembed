@@ -161,7 +161,7 @@ class Client {
      * @param string|array $toAdd
      * @return array the merge params as array
      */
-    public function addParams($params, $toAdd) {
+    public static function addParams($params, $toAdd) {
         $paramArr = self::convertParamsToArray($params);
         $toAddArr = self::convertParamsToArray($toAdd);
         
@@ -173,7 +173,7 @@ class Client {
      * @param type $params
      * @return type 
      */
-    public function convertParamsToArray($params) {
+    public static function convertParamsToArray($params) {
         if (is_array($params))  {
             return $params;
         } 

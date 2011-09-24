@@ -1,12 +1,58 @@
 Introduction
 ------------
-Oembed is a lightweight PHP 5.3 library for fetching OEmbed data. 
+Oembed is a lightweight PHP 5.3 library for fetching OEmbed data.
+
+There are (at least?) 2 ways to use it: 
+- with a simple endpoint, using OEmbedEndpoint class
+- with multiple endpoints, using the 
 Read more about oembed here: http://oembed.com
 
+    // use the service that way if you know that the urls you want to get info are all supporting discovery
     $oembed = new OEmbed\OEmbedService(array(), true);
     $response = $browser->get('http://www.youtube.com/watch?v=REy3wCFjqZo');
 
-    echo $response->html; //stdClass
+    // or use the service that way if you want to split the request accross multiple oembed services,
+    // (multiple sources)
+    $service = new OEmbedService(array(
+        array(
+            'pattern' => '/http:\/\/www\.youtube\.com/', 
+            'url'     => 'http://www.youtube.com/oembed',
+            // retrieve oembed data with width = 200, so a 200px video
+            'params'  => array('width' => 200)
+        ),
+        array(
+            'pattern' => '/http:\/\/www\.flickr\.com/', 
+            'url' => 'http://www.flickr.com/services/oembed'
+        )
+    ));
+    $response = $service->get('http://youtube.com/...');
+    $response2 = $service->get('http://flickr.com/...');
+
+    // you can still use the Service if you want to only allow specific url patterns
+    // even if you only have one endpoint (if you use embed.ly or a similar service for example)
+    $service = new OEmbedService(array(
+        array(
+            'pattern' => '/.*/', 
+            'url'     => 'api.embed.ly/1/oembed',
+            'params'  => array('key' => 'PUT_YOUR_KEY_HERE')
+        ), false,
+        // allow only youtube and flickr from embedly
+        array(
+            '/http:\/\/www\.youtube\.com/',
+            '/http:\/\/www\.flickr\.com/',
+        )
+    ));
+    
+    // if you only want to deal with one oembed endpoint, 
+    // just use OEmbedEndpoint class
+    $endpoint = new OEmbedEndPoint(
+        'http://www.youtube.com/oembed',
+        array('width' => 200)            
+    );
+    $response = $endpoint->get('http://www.youtube.com/...');
+
+    // $response is a basic stdClass
+    echo $response->html; 
 
 If you want to use it with Symfony, I created a [bundle](https://github.com/saadtazi/SaadTaziOEmbedBundle).
 

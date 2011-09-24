@@ -74,11 +74,17 @@ class OEmbedService {
      *
      * @param array $endPoints
      * @param boolean $discovery
-     * @param array $allowedUrlPatterns 
+     * @paramO array $allowedUrlPatterns 
      */
     public function __construct($endPoints = array(), $discovery = false, $allowedUrlPatterns = array()) {
         //var_dump($endPoints);//die();
         $this->endPoints = $endPoints;
+        foreach ($endPoints as $key => $params) {
+            $this->endPoints[$key] = array(
+                                        'pattern' => $params['pattern'],
+                                        'endPoint' => new OEmbedEndpoint($params['url'], isset($params['params'])? $params['params']: array())
+                                     );
+        }
         $this->allowedUrlPatterns = $allowedUrlPatterns;
         $this->discovery = $discovery;
     }
@@ -109,7 +115,7 @@ class OEmbedService {
         $endPoint = $this->findEndPoint($resourceUrl);
         if ($endPoint) {
             // got one... cool
-            list($url, $params) = self::buildUrlAndParams($endPoint, $resourceUrl, $params);
+            $resp = $endPoint->get($resourceUrl, $params);
         } else {
             // are we allowed to get the oembedurl from the resourceurl (meta tag)?
             if (!$this->discovery) {
@@ -118,52 +124,17 @@ class OEmbedService {
                 $url = $this->fetchOEmbedUrl($resourceUrl);
                 if (!$url) {
                     throw new Exception\NoOEmbedLinkFoundException();
+                } else {
+                    // ok, we have a url now... so call it directly
+                    $resp = OEmbedEndpoint::getUrl($url, $params);
                 }
             }
         }
-        // ok, we have a url now...
-        $client = new Client();
-        $resp = $client->get($url, $params);
         
-        // check basic http errors (defined in the spec)
-        switch ($resp->getHttpCode()) {
-            case 401:
-                throw new Exception\OEmbedUnauthorizedException();
-                break;
-            case 404:
-                throw new Exception\OEmbedNotFoundException();
-                break;
-            case 501:
-                throw new Exception\OEmbedNotImplementedException();
-                break;
-        }
-        $respContent = json_decode($resp->content);
-        
-        //if invalid json, there is nothing we can do with the data...
-        if (!$respContent) {
-            //var_dump($resp->getResponseInfo());
-            //var_dump($resp->content);
-            throw new Exception\InvalidResponseException();
-        }
-        return $respContent;
+        return $resp;
         
     }
     
-    /**
-     * merge and 
-     * @param array $endPoint one endpoint array (keys: pattern, url, params)
-     * @param type $resourceUrl
-     * @param type $params
-     * @return array [0]: url, [1]: params (array) 
-     */
-    public function buildUrlAndParams($endPoint, $resourceUrl, $params) {
-        return array(
-                $endPoint['url'],
-                array_merge($params, isset($endPoint['params'])? $endPoint['params'] : array(), array('url' => $resourceUrl))
-        );
-        
-        
-    }
     
     /**
      * find a valid endpoint form the array of endpoints (from constructor)
@@ -171,13 +142,13 @@ class OEmbedService {
      * @see OEmbedService::__construct()
      * 
      * @param string $resourceUrl
-     * @return array one endpoint array (keys: pattern, url, params)
+     * @return OEmbedEndpoint one endpoint object
      */
     public function findEndPoint($resourceUrl) {
         $matchingEndPoint = false;
         foreach ($this->endPoints as $endPoint) {
             if (self::match($endPoint['pattern'], $resourceUrl)) {
-                $matchingEndPoint = $endPoint;
+                $matchingEndPoint = $endPoint['endPoint'];
                 break;
             }
         }
