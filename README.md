@@ -108,12 +108,12 @@ Check the oembed specification for more information.</li>
 <dt>$allowedUrlPatterns</dt>
 <dd>
 if not provided (null or empty), the service will try 
-to get all the urls. If provided, only urls that matchs
+to get all the urls. If provided, only urls that match...
 </dd>
 </dl>
 
 Constructor example with all the params
----------------------------
+---------------------------------------
 
 Here is an example that:
 
@@ -128,15 +128,15 @@ one, and the param 'key=YOUR_KEY' will be added when requresting oembed data
 $oembed = new OEmbed\OEmbedService(
                 // endPoint
                 array(
-                    array(
+                    'youtube' => array(
                         'pattern' => '/http:\/\/www\.youtube\.com/', 
                         'url'     => 'http://www.youtube.com/oembed'
                     ),
-                    array(
+                    'flickr' => array(
                         'pattern' => '/http:\/\/www\.flickr\.com/', 
                         'url'     => 'http://www.flickr.com/services/oembed'
                     ),
-                    array(
+                    'default' => array(
                         'pattern' => '/.*/', 
                         'url'     => 'http://api.embed.ly/1/oembed',
                         'params'  => array('key' => 'YOUR_KEY')
@@ -154,8 +154,8 @@ $oembed = new OEmbed\OEmbedService(
 
 Class Loader
 ------------
-Before doing any of this you need to register the Buzz class loader 
-(not needed if used with the SaadTaziOEmbedBundle).
+Before doing any of this you need to register the OEmbed class loader 
+(not needed if you have an autoloaded, or used with the SaadTaziOEmbedBundle).
 
 ``` php
     require_once 'OEmbed/ClassLoader.php';
