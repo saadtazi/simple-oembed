@@ -13,14 +13,15 @@ Read more about oembed here: http://oembed.com
 
     // or use the service that way if you want to split the request accross multiple oembed services,
     // (multiple sources)
+    // you don't have to name you endpoints, just easier to retrieve
     $service = new OEmbedService(array(
-        array(
+        'youtube' => array(
             'pattern' => '/http:\/\/www\.youtube\.com/', 
             'url'     => 'http://www.youtube.com/oembed',
             // retrieve oembed data with width = 200, so a 200px video
             'params'  => array('width' => 200)
         ),
-        array(
+        'flickr' => array(
             'pattern' => '/http:\/\/www\.flickr\.com/', 
             'url' => 'http://www.flickr.com/services/oembed'
         )
@@ -28,10 +29,14 @@ Read more about oembed here: http://oembed.com
     $response = $service->get('http://youtube.com/...');
     $response2 = $service->get('http://flickr.com/...');
 
+    // you can also use a specific endpoint of the service if you want...
+    //  easier if you name you endpoints (associative array)
+    $response = $service->getEndpoint('youtube')->get('http://youtube.com/...');
+
     // you can still use the Service if you want to only allow specific url patterns
     // even if you only have one endpoint (if you use embed.ly or a similar service for example)
     $service = new OEmbedService(array(
-        array(
+        'youtube' => array(
             'pattern' => '/.*/', 
             'url'     => 'api.embed.ly/1/oembed',
             'params'  => array('key' => 'PUT_YOUR_KEY_HERE')

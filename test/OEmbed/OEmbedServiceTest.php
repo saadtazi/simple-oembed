@@ -130,9 +130,44 @@ class OEmbedServiceTest extends \PHPUnit_Framework_TestCase {
                 'params'  => array('width' => 200)
             )), false, array('/http:\/\/www\.anydomain\.com/'));
         $service->get($this->getTestUrl('discovery'));
-        
     }
     
+    public function testGetEndpoint() {
+        $service = new OEmbedService(array(
+            'youtube' => array(
+                'pattern' => '/http:\/\/www\.youtube\.com/', 
+                'url'     => 'http://www.youtube.com/oembed',
+                // retrieve oembed data with width = 200, so a 200px video
+                'params'  => array('width' => 200)
+            ),
+            'flickr' => array(
+                'pattern' => '/http:\/\/www\.flickr\.com/', 
+                'url' => 'http://www.flickr.com/services/oembed'
+            )
+        ));
+        $response = $service->getEndpoint('youtube')->get($this->getTestUrl('discovery'));
+        $this->assertObjectHasAttribute('version', $response);
+    }
+    
+    /**
+     * @expectedException OEmbed\Exception\NoEndPointFoundException
+     */
+    public function testGetEndpointThatDoesntExist() {
+        $service = new OEmbedService(array(
+            'youtube' => array(
+                'pattern' => '/http:\/\/www\.youtube\.com/', 
+                'url'     => 'http://www.youtube.com/oembed',
+                // retrieve oembed data with width = 200, so a 200px video
+                'params'  => array('width' => 200)
+            ),
+            'flickr' => array(
+                'pattern' => '/http:\/\/www\.flickr\.com/', 
+                'url' => 'http://www.flickr.com/services/oembed'
+            )
+        ));
+        $response = $service->getEndpoint('IDONTEXIST')->get($this->getTestUrl('discovery'));
+        
+    }
 
 // utils
     public function getTestUrl($type) {

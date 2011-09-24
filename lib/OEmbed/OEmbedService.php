@@ -217,4 +217,18 @@ class OEmbedService {
         
         return $oembedUrl;
     }
+    
+    /**
+     * @param string $name
+     * @return OEmbedEndpoint
+     */
+    public function getEndpoint($name) {
+        if (!isset($this->endPoints[$name])) {
+            if  (!isset($this->endPoints[$name]['endPoint'])) {
+                throw new Exception\NoEndPointFoundException();
+            }
+        }
+        
+        return $this->endPoints[$name]['endPoint'];
+    }
 }
