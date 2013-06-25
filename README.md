@@ -4,7 +4,7 @@ Oembed is a lightweight PHP 5.3 library for fetching OEmbed data.
 
 There are (at least?) 2 ways to use it: 
 - with a simple endpoint, using OEmbedEndpoint class
-- with multiple endpoints, using the 
+- with multiple endpoints, using the OEmbedService class
 Read more about oembed here: http://oembed.com
 
         // use the service that way if you know that the urls you want to get info are all supporting discovery
