@@ -7,57 +7,57 @@ There are (at least?) 2 ways to use it:
 - with multiple endpoints, using the 
 Read more about oembed here: http://oembed.com
 
-    // use the service that way if you know that the urls you want to get info are all supporting discovery
-    $oembed = new OEmbed\OEmbedService(array(), true);
-    $response = $browser->get('http://www.youtube.com/watch?v=REy3wCFjqZo');
+        // use the service that way if you know that the urls you want to get info are all supporting discovery
+        $oembed = new OEmbed\OEmbedService(array(), true);
+        $response = $browser->get('http://www.youtube.com/watch?v=REy3wCFjqZo');
+        
+        // or use the service that way if you want to split the request accross multiple oembed services,
+        // (multiple sources)
+        // you don't have to name you endpoints, just easier to retrieve
+        $service = new OEmbedService(array(
+                'youtube' => array(
+                'pattern' => '/http:\/\/www\.youtube\.com/', 
+                'url'     => 'http://www.youtube.com/oembed',
+                // retrieve oembed data with width = 200, so a 200px video
+                'params'  => array('width' => 200)
+            ),
+                'flickr' => array(
+                'pattern' => '/http:\/\/www\.flickr\.com/', 
+                'url' => 'http://www.flickr.com/services/oembed'
+            )
+        ));
+        $response = $service->get('http://youtube.com/...');
+        $response2 = $service->get('http://flickr.com/...');
 
-    // or use the service that way if you want to split the request accross multiple oembed services,
-    // (multiple sources)
-    // you don't have to name you endpoints, just easier to retrieve
-    $service = new OEmbedService(array(
-        'youtube' => array(
-            'pattern' => '/http:\/\/www\.youtube\.com/', 
-            'url'     => 'http://www.youtube.com/oembed',
-            // retrieve oembed data with width = 200, so a 200px video
-            'params'  => array('width' => 200)
-        ),
-        'flickr' => array(
-            'pattern' => '/http:\/\/www\.flickr\.com/', 
-            'url' => 'http://www.flickr.com/services/oembed'
-        )
-    ));
-    $response = $service->get('http://youtube.com/...');
-    $response2 = $service->get('http://flickr.com/...');
+        // you can also use a specific endpoint of the service if you want...
+        //  easier if you name you endpoints (associative array)
+        $response = $service->getEndpoint('youtube')->get('http://youtube.com/...');
+        
+        // you can still use the Service if you want to only allow specific url patterns
+        // even if you only have one endpoint (if you use embed.ly or a similar service for example)
+        $service = new OEmbedService(array(
+            'youtube' => array(
+                'pattern' => '/.*/', 
+                'url'     => 'api.embed.ly/1/oembed',
+                'params'  => array('key' => 'PUT_YOUR_KEY_HERE')
+            ), false,
+            // allows only youtube and flickr from embedly
+            array(
+                '/http:\/\/www\.youtube\.com/',
+                '/http:\/\/www\.flickr\.com/',
+            )
+        ));
+        
+        // if you only want to deal with one oembed endpoint, 
+        // just use OEmbedEndpoint class
+        $endpoint = new OEmbedEndPoint(
+            'http://www.youtube.com/oembed',
+            array('width' => 200)            
+        );
+        $response = $endpoint->get('http://www.youtube.com/...');
 
-    // you can also use a specific endpoint of the service if you want...
-    //  easier if you name you endpoints (associative array)
-    $response = $service->getEndpoint('youtube')->get('http://youtube.com/...');
-
-    // you can still use the Service if you want to only allow specific url patterns
-    // even if you only have one endpoint (if you use embed.ly or a similar service for example)
-    $service = new OEmbedService(array(
-        'youtube' => array(
-            'pattern' => '/.*/', 
-            'url'     => 'api.embed.ly/1/oembed',
-            'params'  => array('key' => 'PUT_YOUR_KEY_HERE')
-        ), false,
-        // allow only youtube and flickr from embedly
-        array(
-            '/http:\/\/www\.youtube\.com/',
-            '/http:\/\/www\.flickr\.com/',
-        )
-    ));
-    
-    // if you only want to deal with one oembed endpoint, 
-    // just use OEmbedEndpoint class
-    $endpoint = new OEmbedEndPoint(
-        'http://www.youtube.com/oembed',
-        array('width' => 200)            
-    );
-    $response = $endpoint->get('http://www.youtube.com/...');
-
-    // $response is a basic stdClass
-    echo $response->html; 
+        // $response is a basic stdClass
+        echo $response->html; 
 
 If you want to use it with Symfony, I created a [bundle](https://github.com/saadtazi/SaadTaziOEmbedBundle).
 
